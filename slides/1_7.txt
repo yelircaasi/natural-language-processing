@@ -1,0 +1,109 @@
+[MUSIC] In this video, we will talk about first
+text classification model on top of features that we have described. And let's continue with
+the sentiment classification. We can actually take the IMDB
+movie reviews dataset, that you can download,
+it is freely available. It contains 25,000 positive and
+25,000 negative reviews. And how did that dataset appear? You can actually look at IMDB website and
+you can see that people write reviews there, and they actually also provide the
+number of stars from one star to ten star. They actually rate the movie and
+write the review. And if you take all those
+reviews from IMDB website, you can actually use that as a dataset for text classification because you have
+a text and you have a number of stars, and you can actually think
+of stars as sentiment. If we have at least seven stars,
+you can label it as positive sentiment. If it has at most four stars,
+that means that is a bad movie for a particular person and
+that is a negative sentiment. And that's how you get the dataset for
+sentiment classification for free. It contains at most 30 reviews per
+movie just to make it less biased for any particular movie. These dataset also provides
+a 50/50 train test split so that future researchers
+can use the same split and reproduce their results and
+enhance the model. For evaluation, you can use accuracy and
+that actually happens because we have the same number
+of positive and negative reviews. So our dataset is balanced in terms
+of the size of the classes so we can evaluate accuracy here. Okay, so let's start with first model. Let's takes features,
+let's take bag 1-grams with TF-IDF values. And in the result,
+we will have a matrix of features, 25,000 rows and 75,000 columns, and
+that is a pretty huge feature matrix. And what is more, it is extremely sparse. If you look at how many 0s are there,
+then you will see that 99.8% of all
+values in that matrix are 0s. So that actually applies
+some restrictions on the models that we can use
+on top of these features. And the model that is usable for these features is logistic regression,
+which works like the following. It tries to predict the probability
+of a review being a positive one given the features that we gave that
+model for that particular review. And the features that we use, let me remind you,
+is the vector of TF-IDF values. And what you actually can do
+is you can find the weight for every feature of that bag
+of force representation. You can multiply each value,
+each TF-IDF value by that weight, sum all of that things and pass it
+through a sigmoid activation function and that's how you get
+logistic regression model. And it's actually a linear
+classification model and what's good about that is since it's
+linear, it can handle sparse data. It's really fast to train and what's more, the weights that we get after
+the training can be interpreted. And let's look at that sigmoid
+graph at the bottom of the slide. If you have a linear
+combination that is close to 0, that means that sigmoid will output 0.5. So the probability of a review
+being positive is 0.5. So we really don't know whether
+it's positive or negative. But if that linear combination in the
+argument of our sigmoid function starts to become more and more positive,
+so it goes further away from zero. Then you see that the probability
+of a review being positive actually grows really fast. And that means that if we get the weight
+of our features that are positive, then those weights will likely
+correspond to the words that a positive. And if you take negative weights, they will correspond to the words that
+are negative like disgusting or awful. Okay, so logistic regression can work on
+these features and we can interpret it. Let's train logistic regression over
+bag of 1-grams with TF-IDF values. What you can actually see is that
+accuracy on test set is 88.5%. And that is a huge jump from a random
+classifier which outputs 50% accuracy. Let's look at learnt features because
+linear models can be interpreted. If we look at top positive weights,
+then we will see such words as great, excellent, perfect, best, wonderful. So it's really cool because
+the model captured that sentiment, the sentiment of those words, and
+it knows nothing about English language, it knows only the examples
+that we provided it with. And if we take top negative ways, then you will see words like worst,
+awful, bad, waste, boring, and so forth. So these word are clearly
+having negative sentiment and the model has learnt it from the examples. That is pretty cool. Let's try to make this model a little
+bit better, we know how to do that. Let's introduce 2-grams to our model. And before we can move further,
+we should throw away some n-grams that are not frequent, that are seen,
+let's say, less than 5 times. Because those n-grams are likely
+either typos or very, like people don't say like that and
+some of them do and it actually doesn't make
+sense to look at those features because we will
+most likely overfeed. So we want to throw that away. And if you introduce 2-grams and
+that thresholding for minimum frequency, you will actually get the number of
+the dimensions of our feature matrix, the following, 25,000 by 150,000. So that is a pretty huge matrix, but
+we can still use linear models and it just works. Let's train logistical regression
+over these bag of 1 and 2-grams with TF-IDF values. And what we actually observe is that
+accuracy and test set has a bump. It has 1.5 accuracy boost. And now,
+we have very close to 90% accuracy. Let's look at learnt weight. If you look at top positive weights,
+then you will see that our 2-grams are actually used by our model because now
+it looks at 2-grams like well worth or better than and it thinks that those
+2-grams have positive sentiment. If you look on the contrary
+on the top negative weights, then you will see the worst. That is another 2-gram that is now used by
+our model to predict the final sentiment. You might think that, okay,
+it doesn't make any sense. So the worst or worst is just the same
+thing as well as well worth or just worth. So maybe it is, but that 1.5% improvement in accuracy actually was provided by addition of
+those 2-grams into our model. So you can either believe it or not,
+but it actually increases performance. How to make it even better? You can play around with
+tokenization because in reviews, people use different stuff like emojis. They use smiles written with text. They can usually use a bunch
+of exclamation marks that, a lot of exclamation marks. And you can actually look
+at those sequences as, you can look at them as different tokens. And you can actually introduce
+them to your model and maybe you will get a better
+sentiment classification, because like a smiling face is better
+than an angry face and you can use that. You should also try to normalize tokens
+by applying stemming or lemmatization. You can try different models,
+like SVM or Naive Bayes, or any other model that can
+handle sparse features. Or another way is you can
+throw bag of words away and use deep learning techniques to squeeze
+the maximum accuracy from that dataset. And as for the 2016,
+accuracy on this particular dataset is close to 92% and
+that is a 2.5% improvement over the best model that we can get with
+bag of words and 2-grams. So that might seem like not
+a very good improvement, but that can actually make sense in
+some tasks where you can get a lot of money even for 1% improvement, like ad
+click prediction or anything like that. So let's summarize. Bag of words and simple linear models
+over that features actually work. And you can add 2-grams and that is done
+for free and you get a better model. The accuracy gained from deep learning
+models is not mind-blowing but it is still there and
+you might consider using deep learning techniques to solve the problems
+of sentiment classification. In the next video,
+we will look at spam filtering task, another example of task classification
+that can be handled in a different way. [MUSIC]

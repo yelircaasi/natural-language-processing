@@ -1,0 +1,97 @@
+[SOUND] Hi, everyone. You are very welcome to
+week two of our NLP course. And this week is about
+very core NLP tasks. So we are going to speak about
+language models first, and then about some models that work
+with sequences of words, for example, part-of-speech tagging or
+named-entity recognition. All those tasks are building blocks for
+NLP applications. And they're very, very useful. So first thing's first. Let's start with language models. Imagine you see some beginning
+of a sentence, like This is the. How would you continue it? Probably, as a human,
+you know that This is how sounds nice, or This is did sounds not nice. You have some intuition. So how do you know this? Well, you have written books. You have seen some texts. So that's obvious for you. Can I build similar intuition for
+computers? Well, we can try. So we can try to estimate probabilities of
+the next words, given the previous words. But to do this, first of all,
+we need some data. So let us get some toy corpus. This is a nice toy corpus about
+the house that Jack built. And let us try to use it to estimate the
+probability of house, given This is the. So there are four
+interesting fragments here. And only one of them is
+exactly what we need. This is the house. So it means that the probability
+will be one 1 of 4. By c here, I denote the count. So this the count of This is the house,
+or any other pieces of text. And these pieces of text are n-grams. n-gram is a sequence of n words. So we can speak about 4-grams here. We can also speak about unigrams,
+bigrams, trigrams, etc. And we can try to choose the best n,
+and we will speak about it later. But for now, what about bigrams? Can you imagine what happens for
+bigrams, for example, how to estimate probability of Jack,
+given built? Okay, so
+we can count all different bigrams here, like that Jack, that lay, etc., and
+say that only four of them are that Jack. It means that the probability
+should be 4 divided by 10. So what's next? We can count some probabilities. We can estimate them from data. Well, why do we need this? How can we use this? Actually, we need this everywhere. So to begin with,
+let's discuss this Smart Reply technology. This is a technology by Google. You can get some email, and
+it tries to suggest some automatic reply. So for example, it can suggest
+that you should say thank you. How does this happen? Well, this is some text generation, right? This is some language model. And we will speak about this later,
+in many, many details, during week four. So also, there are some other
+applications, like machine translation or speech recognition. In all of these applications, you try to
+generate some text from some other data. It means that you want to
+evaluate probabilities of text, probabilities of long sequences. Like here, can we evaluate
+the probability of This is the house, or the probability of a long,
+long sequence of 100 words? Well, it can be complicated
+because maybe the whole sequence never occurs in the data. So we can count something, but we need somehow to deal with
+small pieces of this sequence, right? So let's do some math to understand how to
+deal with small pieces of this sequence. So here, this is our sequence of keywords. And we would like to
+estimate this probability. And we can apply chain rule,
+which means that we take the probability of the first word, and then condition
+the next word on this word, and so on. So that's already better. But what about this last term here? It's still kind of complicated because the
+prefix, the condition, there is too long. So can we get rid of it? Yes, we can. [LAUGH] So actually, Markov assumption says you shouldn't
+care about all the history. You should just forget it. You should just take the last n terms and condition on them, or
+to be correct, last n-1 terms. So this is where they
+introduce assumption, because not everything in
+the text is connected. And this is definitely very helpful for us because now we have some chance
+to estimate these probabilities. So here, what happens for
+n = 2, for bigram model? You can recognize that we already
+know how to estimate all those small probabilities in the right-hand side,
+which means we can solve our task. So for a toy corpus again,
+we can estimate the probabilities. And that's what we get. Is it clear for now? I hope it is. But I want you to think about
+if everything is nice here. Are we done? Well, I see at least two problems here. And I'm going to describe both of them,
+and we will try to fix them. Actually, it's super easy to fix them. So first,
+let's look into the first word here and the probability of this first word. So the first word can be This or That in our toy corpus. But it can never be malt or
+something else. Well, maybe we should use this. So maybe we should not
+spread the probability among all possible words
+in the vocabulary. But we should just stick to those that
+are likely to be in the first spot. And we can do this. Let us just condition our first
+words on a fake start token. So let's add this fake start
+token in the beginning. And then we will get the probability
+= 1/2 for the first place, right, because we have either the This or
+That. So it can be helpful. What else? Actually, there is another problem here. So how do you think is this
+probability normalized across all different sequences
+of different length? Well, it's not good. So here, we have the probabilities
+of short sequences, of the sequences of length 1 = 1, and then all the sequences of length 2
+also summing to the probability = 1. But that's not what we wanted. We wanted to have one
+distribution over all sequences. First, I will show how to fix you, I will
+show you how to fix that, like this. And then we will discuss why it helps. So let us add the fake token in the end,
+as we did in the beginning. And let us have this probability of
+the end token, given the last term. Okay, easy. Now, why does that help? So imagine some generative process. Imagine how this model
+generate next words. I'm going to show you the example,
+how it generates different sequences. And hopefully,
+we will see that all the sequences will fall into one big probability mass. They will spread this
+probability mass among them. So this is some toy corpus again. We want to evaluate this probability. And this is untouched probability mass,
+yet. Let's cut it, so
+we can go for dog or for cat. Let's go for cat. Now we can decide whether
+we want to go for tiger or for dog, or if we want to terminate. And this is super important. So now the model has
+an option to terminate. That's not what it could do
+without the fake end token. So this is the place where things could go
+wrong if we did not add this fake token. So okay, now we decide to pick something we can split further and
+pick and split and pick. And this is exactly
+the probability of this sequence that we want you to evaluate. But what's more important, you can imagine that you can also split
+all the other areas in different parts. And then all of them will
+fit into this area, right? So all the sequences of different lengths
+altogether will give the probability mass equal to 1, which means that it
+is correctly a normalized probability. Congratulations, here we are. So just to summarize,
+we could introduce bigram language model that splits, that factorizes
+the probability in two terms. And we could learn how to evaluate
+these terms just from data. So you can see two formulas here,
+in the bottom of the slide. And let it a moment to see
+that they are the same. So when you normalize
+your count of n-grams, you can either think about
+it as counting n-1 grams. Or you can think about it as counting
+n-1 gram + different continuations, all possible options, and
+sum over all those possible options. Okay, hope you could see that
+it is really about counting. And in the next videos, we will continue
+to study, in more details, how to train this model, how to test this model,
+and what other problems we have here. Thank you. [SOUND]

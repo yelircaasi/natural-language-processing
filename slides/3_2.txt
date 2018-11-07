@@ -1,0 +1,132 @@
+[MUSIC] Hey, in the previous video,
+you could see that to build models of distributional semantics we need
+some kind of matrix factorization. And now we are going to cover different
+ways to perform matrix factorization in many details. Let us start with an approach based
+on singular value decomposition. So this is just a fact from linear
+algebra that says that every matrix can be factorized into
+those three matrices. The left and the right matrices
+will contain so called left and right eigenvectors. And the metrics in the middle
+will be diagonal and the values on the diagonal will
+be related to eigenvalues. Now importantly, those values on the diagonal will
+be sorted in the decreasing order. And how many of them do we have there? Well, the number of those
+values on the diagonal will be the number of non-zero
+eigenvalues of X transposed X. So it is related to
+the rank of that matrix. Awesome, so this is just something that we
+know, but how can we use this in our task? The idea is as follows. So once those values are sorted,
+what if we keep first k components? Probably, if we keep just this
+blue regions of every matrix, we will get some nice approximation
+of the original X matrix. Now, it sounds rather hand-wavey, right? What is a nice approximation? Actually, there is a very
+accurate answer to this question. So always blue part is the best
+approximation of rank k for X matrics, in terms of the loss that
+is written in the bottom of this slide. Let us look into this loss,
+this is just squared loss, okay? So you can see that there are some
+squares between corresponding elements of two matrices, and
+we can then pair the squared root. So I hope it sounds familiar to you. And now we'll take away ease
+that truncated SVD can get for us the best approximation of the matrix,
+according to this loss. Now do you remember that, actually,
+in the previous video, we were going to factorize our matrix into two matrices,
+not into three matrices, okay. Well, what can we do about it? We can just use some heuristics, actually. So one idea would be to say,
+okay, let us take the first and the second matrix and
+put them to phi matrix. And then the last one and
+put it to theta, or another option would be to say that
+the diagonal matrix in between should be honestly split between
+two matrices phi and theta. So we apply squared root and say that
+one squared root goes to the left and another squared root goes to the right. Okay, so you can see that SVD provides
+some ways to build phi and theta matrices. Now let us just summarize again
+what we have just realized. We were going to build models
+of distributional semantics, which means we have some word concurrence
+matrix filled with PMI values or with some concurrence values. And we were going to represent it with
+a factorization of phi and theta matrices. And then we could see that SVD can
+provide this for us, and you can actually see that those phi u vectors and
+theta v vector would be our embeddings. Will be our what vectors that
+we are interested in, and also if you just multiply phi u and
+theta v, as a inner product,
+you will get the value equal to, let's say,
+PMI in the left-hand side matrix, right? So I just want you to
+remember this notation. We have phi and theta matrices. We have phi u and theta v vectors. And the matrix way of thinking
+about it corresponds to the way of thinking about every
+element like PMI is somehow equal to the dot product of phi u and
+theta v. Okay, awesome. So far we have been using the squared loss
+because SVD deals with squared loss but this is not perfect maybe,
+maybe we can do better. So the next model, which is called
+global vectors, tries to do better. So don't be scared. Let us break it down. You can see that it is still some
+squared loss, but it is weighted. So f function provides some weights and
+you'll see that f function is increasing. So if the word concurrences are higher,
+then this particular element of the matrix is more
+important to be approximated exactly. Okay, now I have a question for you. Why does this green line for f function stops increasing at some
+point and just goes as a constant? Well, you might remember about
+stop words that are not important. So starting from some moment,
+the words should not get bigger weights here just
+because this is somehow noisy. Awesome, now let us look
+into the brackets and see that we have a green part and
+the red part there. So the red part is our regional matrix. We used to have there word concurrences or
+BMI values, now we have logarithms. Okay, why not? Now what is the green part? So usually we would have just the inner
+product of phi u and theta v. This would correspond to our
+matrix factorization task. Now it's almost the same. We just have those b terms
+that are some bias terms. This is not actually important but we say, well, maybe we should chew on them as well
+and have some more freedom in our model. But this is again not so important. Now, how do we train this model? In case of SVD, we have just
+an exact recipe from linear algebra how to build those three matrices. Now, we have just some loss
+that we want to minimize. What do we do with some losses
+that you want to minimize? Well, we can try to do
+stochastic gradient descent. In this case, we can treat every
+element of the matrix as some example. So we take an element, we perform
+one step of gradient descent and then update the parameters and take
+another element, and proceed in this way. Finally, we will get our global
+vectors model trained and we'll obtain those phi u and theta v vectors vectors
+that can be used as word embeddings. And actually,
+this model is rather recent and very nice way to provide word embeddings,
+so please keep it in mind. Now, let us forget about matrix
+factorization for a few slides. Let us think about what would be other
+approaches to build word embeddings. Another approach to think about
+the task would be language modeling. So just a recap, language modelling is about probabilities
+of some words given some other words. So in this case, in case of so
+called skip-gram model, we are going to produce the probability
+of context given some focus word. For example, the context words can
+come from some window of a fixed size. Now, we assumed that this window
+is represented as a bag of words. So that's why we'll just
+go to this product and have probabilities of one
+word given another word. Now how would we produce
+these probabilities. You can see the formula in
+the bottom of the slide, and you might recognize that it is softmax. Okay, so it means that it will
+be indeed normalized as we want, as a correct probability
+distribution over the vocabulary. Now what is their insight? Again, inner products between phi u and
+theta v. So these inner products correspond to
+some similarity between two vectors. We take this similarity, normalize them
+using softmax, and get probabilities. Okay, so this model is called Skip-gram, it is very important, but
+unfortunately, it is rather slow. Because softmax computation is slow
+especially if you have a big vocabulary. What can we do about it? Actually we can just say let us
+reformulate the whole procedure like that. You can see that we have some green and
+red parts of this slide. The green part corresponds
+to positive examples. The positive examples are about
+those pairs of words, u and v, that co-occurred together. We just take it from data, right? And for this pair of words that co-occur,
+we want to predict yes and there are some other pairs of words that do not co-occur,
+and we just sample them randomly. And for them, we want to predict no. Now how do we model these predictions? We model them with sigmoid function. So you'll see that now, sigmoid
+function is applied to inner products. It will give us probabilities
+whether yes or no. Okay, now maybe you
+are somehow scared with the mathematical expectation
+that you see here. And actually, we do not take any
+mathematical expectation though we write it in some theoretical way,
+but what we do we just sample. So k will correspond to
+the number of samples, and we sample just k words from
+the vocabulary for every given u word. And we use all those samples in this term,
+so you can just forget about expectation for
+now. What do we get by this model? Well, again we build those embeddings for
+words, and now we do not need to normalize anything by the size
+of the vocabulary, and this is nice. So this model,
+skip-gram negative sampling, is very efficient and used a lot. The final slide for you is somehow to understand that this
+skip-gram negative sampling model is still related to matrix factorization
+approach that we have discussed. What if we take
+the derivatives of this loss? So we say that, what would be
+the best value for the inner product? If you do this, you will
+understand that the best value for this inner product is a shifted PMI value,
+like here. So you'll see that it is PMI
+value minus logarithm of k, where k is the number of negative samples. This is just some nice fact. This was published in a recent paper and
+it says that even though in skip-gram negative sampling model,
+we do not think about any matrices. However, you can still interpret it as
+some implicit matrix factorization of shifted PMI values into our usual
+two matrices, phi and theta. So this is rather important fact
+because it says that more recent models are still very similar
+to more previous models, like SVD decomposition of PMI values. Because now, the only thing that is
+different is that we have shifted PMI and some other loss. Okay, this all for
+the mathematical part of the methods, and in the next video,
+we will see how to use these models. [MUSIC]

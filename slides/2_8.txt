@@ -1,0 +1,126 @@
+[MUSIC] Hi, this video is about
+a super powerful technique, which is called recurrent neural networks. I assume that you have heard about it,
+but just to be on the same page. So this is a technique that
+helps you to model sequences. You have an input sequence of x and
+you have an output sequence of y. Importantly, you have also
+some hidden states which is h. So here you can know how you transit
+from one hidden layer to the next one. So this is just some activation
+function f applied to a linear combination of the previous
+hidden state and the current input. Now, how do you output
+something from your network? Well, this is just a linear layer
+applied to your hidden state. So, you just multiply your
+hidden layer by U metrics, which transforms your hidden
+state to your output y vector. Great, how can we apply this network for
+language bundling? Well, actually straightforwardly. So the input is just some
+part of our sequence and we need to output the next
+part of this sequence. What is the dimension of those U
+metrics from the previous slide? Well, we need to get the probabilities
+of different watts in our vocabulary. So the dimension will be
+the size of hidden layer by the size our output vocabulary. Okay, so we apply softmax and
+we get our probabilities. Okay, how do we train this model? So in the picture you can see that
+actually we know the target word, this is day, and this is wi for
+us in the formulas. What does the model, the model outputs
+the probabilities of any word for this position? So, we need somehow to compare our work, probability distribution and
+our target distribution. So, the target distribution
+is just one for day and zeros for
+all the other words in the vocabulary. And we compare this to distributions
+by cross-entropy loss. You can see that we have a sum there
+over all words in the vocabulary, but this sum is actually a fake sum because
+you have only one non-zero term there. And this non-zero term corresponds
+to the day, to the target word, and you have the probable logarithm for
+the probability of this word there. Okay, so the cross-center is probably one
+of the most commonly used losses ever for classification. So maybe you have seen it for
+the case of two classes. Usually there you have just
+labels like zero and ones, and you have the label multiplied by
+some logarithm plus one minus label multiplied by some other logarithms. Here, this is just the general case for
+many classes. Okay, so, we get some understanding
+how we can train our model. Now, how can we generate text? How can we use our model
+once it's trained? We need some ideas here. So the idea is that,
+let's start with just fake talking, with end of sentence talking. And let's try to predict some words. So we get our probability distribution. How do we get one word out of it? Well we can take argmax. This is the easiest way. So let's stick to it for now. Now what can we do next? Next, and this is important. We can feed this output words as
+an input for the next state like that. And we can produce the next
+word by our network. So we continue like this
+we produce next and next words, and
+we get some output sequence. Now we took argmax every time. So it was kind of a greedy approach, why? Because when you will see your sequence,
+have a good day, you generated it. Well probably it's not the sequence
+with the highest probability. Because you could, maybe at some step,
+take some other word, but then you would get a reward during
+the next step because you would get a high probability for some other output
+given your previous words. So something that can be better than
+greedy search here is called beam search. So beam search doesn't try to estimate the
+probabilities of all possible sequences, because it's just not possible,
+they are too many of them. But beam search tries to keep
+in mind several sequences, so at every step you'll have, for example five
+base sequences with highest possibilities. And you try to continue
+them in different ways. You continue them in different ways,
+you compare the probabilities, and you stick to five best sequences,
+after this moment again. And you go on like this,
+always keeping five best sequences and you can result in a sequence which is
+better than just greedy argmax approach. Okay, so what's next? Next I want to show you the experiment
+that was held and this is the experiment that compares recurrent network model with
+Knesser-Ney smoothing language model. So you remember Knesser-Ney
+smoothing from our first videos. And here this is 5-gram language model. You can see that when we add
+recurrent neural network here we get improvement in perplexity and
+in word error rate. So this is nice. This says that recurrent neural networks
+can be very helpful for language modeling. And one interesting thing is that,
+actually we can apply them, not only to word level, but
+even to characters level. So instead of producing the probability of
+the next word, giving five previous words, we would produce the probability
+of the next character, given five previous characters. And this is how this model works. So this is the Shakespeare corpus
+that you have already seen. And you can see that this
+character-level recurrent neural network can remember some structure of the text. So you have some turns, multiple turns in
+the dialog, and this is awesome I think. Okay, so this is just vanilla
+recurring neural network, but in practice,
+maybe you want to do something more. You want some other tips and tricks to
+make your awesome language model work. So first thing to remember is
+that probably you want to use long short term memory networks and
+use gradient clipping. Why is it important? Well you might know about the problem
+of exploding gradients or gradients. And this architectures can help
+you to deal with this problems. If you do not remember LSTM model, you can check out this blog post
+which is a great explanation of LSTM. You can start with just one layer LSTM,
+but maybe then you want to stack several
+layers like three or four layers. And maybe you need some residual
+connections that allow you to skip the layers. Now another important thing to
+keep in mind is regularization. You could hear about drop out. For example,
+in our first course in the specialization, the paper provided here is about dropout
+applied for recurrent neural networks. Well, if you don't want
+to think about it a lot, you can just check out the tutorial. Which actually implements
+exactly this model and it will be something working for
+you just straight away. And maybe the only thing that
+you want to do is to tune optimization procedure there. So you can use rate and decent, you can
+use different learning rates there, or you can play with other
+optimizers like Adam, for example. And given this, you will have
+a really nice working language model. And most likely it will be enough for
+your any application. However, if you want to do some research, you should be aware of papers
+that appear every month. So this is has just two very recent
+papers about some some tricks for LSTMs to achieve even better performance. So this is kind of really
+cutting edge networks there. So this is a lot of links to explore for
+you, feel free to check it out, and for this video I'm going just to show
+you one more example how to use LSTM. This example will be about
+sequence tagging task. So you have heard about part of speech
+tagging and named entity recognition. And this is one more task which
+is called symmetrical labelling. Imagine you have some sequence like,
+book a table for three in Domino's pizza. Now, you want to find some symantic
+slots like book a table is an action, and three is a number of persons,
+and Domino's pizza is the location. Usually use B-I-O notation
+here which says that we have some beginning of the slowed
+sound inside the slot and just outside talkings that do not belong
+to any slot at all, like for and in here. I want to show you that my directional
+is LSTM as super helpful for this task. So, what is a bi-directional LSTM? Well you can imagine just LSTM that
+goes from left to the right, and then another LSTM that goes
+from right to the left. Then you stack them, so
+you just concatenate the layers, the hidden layers, and you get your
+layer of the bi-directional LSTM. After that, you can apply one or
+more linear layers on top and get your predictions. And you train this model
+with cross-entropy as usual. So nothing magical. Okay, what is important
+here is that this model gives you an opportunity to
+get your sequence of text. It can be this semantic role labels or named entity text or
+any other text which you can imagine. And one thing I want you to
+understand after our course is how to use some methods for certain tasks. Or to see what are the state of
+other things for certain tasks. So for this sequences taking tasks, you can use either bi-directional LSTMs or
+conditional random fields. So these are kind of two main approaches. Conditionally random fields are definitely
+older approach, so it is not so popular in the papers right now. But actually there are some
+hybrid approaches, like you get your bidirectional
+LSTM to generate features, and then you feed it to CRF, to conditional
+random field to get the output. So if you come across this
+task in your real life, maybe you just want to go and
+implement bi-directional LSTM. And this is all for this week. Thank you. [MUSIC]

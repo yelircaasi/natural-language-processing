@@ -1,0 +1,98 @@
+[MUSIC] Hey everyone, you're very welcome
+to week three of our course. This week is about semantics,
+so we are going to understand how to get the meaning of words, or
+documents, or some other pieces of text. We are going to represent
+this meaning by some vectors, in such a way that similar words
+will have similar vectors, and similar documents will
+have similar vectors. Why do we need this? Well for example, we need this in search. So let's say we want to do some ranking. For example, we have some keywords, and
+then we have some candidates to rank. And then we can just compute these kind
+of similarities between our query and our candidates, and
+then get the top most similar results. And actually there are numerous of
+applications of these techniques. For example, you can also think
+about some ontology learning. What it means is that sometimes you need
+to represent the hierarchical structure of some area. You need to know that there
+are some concepts, and there are some examples of these concepts. For example, you might want to know that,
+I don't know, there are plumbers, and that they can fix tap or faucet. And you need to know that tap and faucet are similar words that
+present the same concept. This can be also done by
+distributional semantics, and this is what we are going
+to cover right now. Okay, so for example we want to understand
+that bee and bumblebee are similar. How can we get that? Let us start with counting
+some word co-occurrences. So we can just decide
+that we are interested in the words that co-occur
+in a small sliding window. For example, in a window of size ten. And if the words co-occur
+we say plus 1 for this counter, and
+get these green counters in the slide. So this way we will understand
+that bee and honey are related. They are called syntagmatic associates because they often co-occur
+together in some contexts. However if we get back to our
+example to understand that tap and faucet are similar,
+that's not what we need. We need just to get to know some other
+second order co-occurrence, which means that these two words would co-occur
+with similar words in their contexts. For example, we can compute a long,
+sparse vector for bee, the cells, what are the most
+popular neighbors of this word? And we will also count the same vector for
+bumblebee. And after that, we will compute
+similarity between these two vectors. This way we will understand that bee and bumblebee can be interchangeably
+used in the language. And this means that they are similar,
+right? So they're usually called
+paradigmatic parallels, and this is the type of co-occurrence
+that we usually need. Now let us get in
+a little bit more details first on how to compute
+those green counts. Okay, so as I have already said,
+you can compute just word co-occurrences. But they can be biased because of
+too popular words in the vocabulary, like stop words, and then it will
+be rather noisy estimates, right? So you need some help to
+penalize too popular words. And then one way to do this would
+be Pointwise Mutual Information. It says that you should put the individual
+counts of the words to the denominator. This way you will understand
+whether these two words are randomly co-occurrent or not. So if you look to the first formula, you see that in the numerator you have
+the joint probability of the words. And in the denominator you
+have the joint probability in the case that the two random
+variables are independent, right? So if the words were independent, then we could just say that this is
+two probabilities, it is factorized. So in case of independent words,
+you will get 1 there for this fraction. And in case of dependent words
+that occur too much together, you will get something more. So this is the intuition of PMI. This is whether the words are randomly
+co-occurred or they are really related. Now do you see any more
+problems with this measure? Well actually, there are some. So when you see some counts and
+logarithm applied to them, you should have some bad feeling that
+you are going to have 0 somewhere. And indeed you can have those words
+that never co-occur together, or those words that co-occur really rare,
+and then very low numbers for your logarithms. So the good idea is just to say,
+let us take the maximum of the PMI and 0. This way we will get rid of
+those minus infinity values, and we will get nice positive
+Pointwise Mutual Information. This is the measure that is usually used,
+and the idea that goes for all these measures actually would
+be just distributional hypothesis. It says that you can know
+the word by the company it keeps. So the meaning of the word is somehow
+defined by the context of this word. Now let's get back to this nice slide so
+we know how to compute those green values. What other problems we have here? Well if you want to measure a cosine
+similarity between these long, sparse vectors,
+maybe it's not a good idea. So it is long, it is noisy,
+it is too sparse. Let us try to do some
+dimensionality reduction. So here, the matrix on the left is
+just stacked rows that you have seen during the previous slide. It is filled with some values, as we have described like PMI, and
+then we factorize it into two matrices. And the dimension there in
+between of them would be K, so it is some low dimensional factorization. For example, K would be 300,
+or something like that. You have lots of different options
+how to do this factorization, and we will get into them later. What we need to know now is that we
+are going to compare now the rows of v matrix instead of the original
+sparse rows of X matrix. This way we will get some measure of
+whether the words are similar, and this will be the output of our model. So far we have looked into how our words occur with other words
+from a sliding window. So we had some contexts, which would
+be words from a sliding window. However, we can have some more
+complicated notion of the contexts. For example,
+you can have some syntax parses. Then you will know that you have some
+syntactic dependencies between the words. And you can see that some word has
+co-occurred with another word and had this type of relationship
+between them, right? So for example, Australian has
+co-occurred with scientist as a modifier. So in this model,
+you will say that your contexts are word plus the type
+of the relationship. And in this case you will
+have not a square matrix, but some matrix of words by contexts. And for
+the contexts you will have the vocabulary of those word class modifier units, okay? This will be actually a better idea to do,
+because syntax can really help you to understand what is important
+to local context and what is not. What is just some random
+co-occurrences that are near, but that are not meaningful. However, usually we just
+forget about it and we speak about word by
+word co-occurrence matrix. But still, we will sometimes
+say that we have words and contexts, because in the general
+model we could have that. [MUSIC]

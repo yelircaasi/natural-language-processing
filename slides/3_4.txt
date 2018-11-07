@@ -1,0 +1,108 @@
+Hey, in the previous video,
+you have seen that what to school and works nicely for lots of different tasks. However, in this video we will raise some
+doubts and we will see that especially for world analogies task everything is not so
+smooth. Just to recap, the word2vec model is
+trained in an unsupervised manner. It means that the model just
+sees the let's say Wikipedia. And it this to obtain word vectors. Now the word vectors that are obtained
+have some nice properties. For example, if you take the vector for
+king, you'll subtract the vector for man and add the vector for
+woman, you will get the vector. And the closest word to
+this one will be queen. And this is awesome, right? So it looks like the model could
+understand some meaning of the language. Even though we did not have
+this in the data explicitly. But, well let us look
+into more closer details. How this of the closest word is performed? So you see that we have these
+arithmetic expression and then we maximize cosine similarity
+between the result of the expression and all the candidates in our space but we
+exclude three candidates from this search. So we say that our source was, so let's say king, man and
+woman do not participate in this search. And well, you know what is this rather
+important trick that is usually omitted in descriptions of word2vec model. However, let us see what would
+happen if we looked into this honestly and if we performed
+the maximization in the whole space. The picture shows what would
+be the closest neighbor to the arithmetic expression
+in case of the search. The color shows the ratio. The names on the left correspond to
+different categories of analogies. It is not so important for now, let us look into the last
+one which is called Encyclopedia. The example about king
+will fall into this one. So what we see is that when we do king
+minus man plus woman we get some vector and in most of cases it will be close
+to the b vector, which is king here. Also in some cases, it can be close to
+a prime vector, which is woman here. But never to b prime vector,
+which is our target queen vector. So you see actually in the, let's say
+90% or 80% of different analogies. We find the vector which is
+close to b vector instead of the target b prime vector. Well you know it somehow ruins
+a little bot the picture that word2vec understands our language. Now I want to dig a little
+bit deeper into it. How can it be that when we exclude a,
+a prime and b vectors,
+we actually find b prime vectors. But if we do not exclude them,
+we end up with b vector, so I think that this picture
+can shed some light. The thing is that the shift vector
+a prime minus a seems to be close to 0. So this plus a woman
+minus men is close to 0. It means that when we employ our and we try to find the closest neighbor,
+well the closest neighbor is actually b. But once b is excluded, the next
+closest neighbor is indeed b prime. And we say that, okay,
+king is excluded and queen is found. Okay, so maybe we can just use much
+more simple methods to do this. I mean,
+can we just the nearest neighbor of b? And do not apply any
+arithmetic operations at all. Well, some people tried that and they said that for
+one particular category of analogies. The plural category which is apples to
+apples is same as orange to oranges. Just the strategy to take the closest
+neighbor of b results in 70% accuracy. So you see this is a really high accuracy,
+very similar to what we could see for world2vec back in the previous videos. And just by a very dumb approach. This is another visualization all for
+the same idea. So this comes from a recent paper and
+it says let us split our word analogy examples
+into several brackets. So for example,
+those analogy examples where b and b prime vectors are similar will be
+going to the right and those examples, where b and b prime vectors are also
+similar, we will be going to the left. Now the blue bars in this slide show
+the accuracy of wold2vec for every bucket. So you can easily see that the blue
+bars are high on the right, and low on the left. Which means that word2vec
+works really nice in those analogies where b and b prime are similar. And it works poorly for those more complicated tasks
+where they are not similar. Now let us see what are those
+more complicated tasks? So let us study what types of
+analogies covered in this diagram. There are actually four
+main types of analogies. For example you can find actor and
+actress in the very bottom line. This is kind of the same thing
+as our king and queen example. But we have much more here. So first,
+we have some morphological examples. We have inflectional morphology which
+means that we can just change the form of the word like orange to oranges
+is the same as apple to apples. Or we can have derivational morphology,
+which can also change the part of speech, like bake to
+baker is the same as play to player. Now we have lots of different
+semantical analogies. For example, we have hypernyms there. This would be, for example, peach to fruit
+is the same as cucumber to vegetable. We have many more, for example, the nice one is about colors like
+blood is red and sky is blue. And there have many different options,
+and this is not so easy to build this dataset, so
+we need some linguistic expertise. Anyways, once we have this,
+can we look into how word2vec performs for
+different analogies. And can we compare word2vec
+with a very simple baseline. The baseline would be to just
+to take the closest neighbor to one of the query words. So here we go. Each line here corresponds
+to some analogy example. For example, one line could correspond to apple to
+apples is the same as orange to oranges. Now the left point for every line
+is the performance of the baseline. And the right point of every line
+is the performance of word2vec. So it means that horizontal lines show you that word2vec is
+not better than base line. When the line has a high slope,
+it means that word2vec does a good job. So you see that for inflectional
+morphology which is an easier task. What the and for derivational morphology. All the lines are horizontal. Now what happens with semantic analogies. Well this is a nice picture, so the thing on the left is about
+different types of analogies and most of them have horizontal slow push
+means that word2vec doesn't work for them. But two lines,
+red lines have high slope and those two are the examples about genders. Like man to woman is as king to queen
+is as actor to actress and so on. And the picture on the right is
+about some named entities and the three red lines are about
+countries and capitals. Examples that are really popular
+in world2vec descriptions. For example, Moscow to Russia
+is the same as Paris to France. So you know what? Those very famous examples are kind of the only ones that actually
+work with Word2vec. I mean there are not the only ones but it looks things are generally worst
+in random for different tasks. Okay, so the takeaway of this insight would be that you should be very
+careful about hype that you see around. So it is always nice to dig into some
+details, like how is a relation performed? What would happen with
+a little bit different tasks? And see whether some of these
+provide some good or bad solutions. So to me it looks like word2vec works
+nicely for word similarity task. For example, if you have some application
+where you need to understand that tap and faucet are really similar and should be placed into one category
+then word2vec is your choice. But you shouldn't be blinded, and
+you shouldn't think that it somehow solves the language or provides the solutions for
+word analogy task in all the cases. So it works sometimes, but not always. And this is a nice question to
+have further research on it. Okay, in the next video, we'll talk about some extensions
+of those techniques like word2vec. We will see what are now current
+state of that approaches and what are some open source implementations
+that you can use in your applications. So stay tuned, and we will get some practical advice, what models to build in your cases. [SOUND]

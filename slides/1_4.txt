@@ -1,0 +1,109 @@
+[MUSIC] In this video, I want to remind you that
+NLP area is not only about mathematics but it also about linguistics, and
+it is really important to remember it. So the first slide will be about this picture that is really very popular
+in many introductions to NLP. But I think that we also
+need to briefly cover it. So let us say that we
+are given some sentence. There are different stages of analysis for
+that sentence. The first stage, which is called morphological stage,
+would be about different forms of words. For example, we care about part of speech
+text, we care about different cases and genders and tenses. So this is everything that goes just for
+single words in the sentence. Then the next stage, syntactical analysis, will be about different relations
+between words in the sentence. For example, we can know that there
+are some objects and subjects and so on. Now the next stage, once we know some synthetic structures,
+would be about semantics. So semantics is about the meaning. So you see, we are going higher and
+higher in our abstraction, going from just some
+symbols to some meanings. And to be pragmatics would be
+the highest level of this abstraction. Now, one reason why we do not
+cover all this building blocks in many details later in our course
+is that you can just use some very nice log books implementations for
+low level stages. For example for morphological and
+syntactical analysis, you might try using analytical library which is
+a really convenient tool in Python. So please feel free to investigate it. And another thing that I wanted
+to mention is Stanford parser. It is a parser for synthetic analysis
+that provides different options and has really lots of
+different models built in. Now Gensim and MALLET would be
+about more high level abstractions. For example, you can do
+subclassification problems there or you can think about semantics. So you have there topic models and some word embeddings representations that
+we will discuss later in week three. Now, another thing which also
+comes from linguistic part of our area is different types of
+relations between the words. And linguists know really a lot
+about what could be that types. And this knowledge can be found
+in some extrinsic resources. For example, WordNet is a resource
+that tells you that there are, for example, some hierarchical relationships. Like, we have some fruits, and then some particular types of fruits
+like peach, apple, orange, and so on. So this relation would be
+called hyponym and hypernym. And there are also some other
+relationships like part and the whole. For example, you have a wheel and a car. So this type of relationship
+is called meronyms. Now this type of relationships can
+be found in the WordNet resource. Here in this slide, I have a picture
+of another resource, BabelNet. The BabelNet resource is multilingual, so you can find some concepts in
+different languages there. And what is nice, you have some
+relations between these concepts. So for example,
+I just typed in NOP there and then I have seen part
+of speech taking test. I clicked into this test and I could see some nearest neighbors
+in this space of concepts. For example,
+I can see that the Viterbi algorithm and Baum-Welch algorithm
+are somewhere close by. And after Week two of our course, you'll know that they are indeed
+very related to this task. So the takeaway from this slide would
+be to remember that there are some extrinsic resources that can be
+nicely used in our applications. For example, how can they be used? This is a rather complicated task. It is called reasoning, and it says that
+there is some story in a natural language. For example, Mary got the football,
+she went to the kitchen, she left the ball there. Okay, so we have some story, and now we have a question after this
+story, where is the football now? So to answer this question, the machine needs to somehow
+understand something, right. And the way that we can build this
+system would be based on deep learning. So you might have heard
+about LSTM networks, it is a particular type of
+recurrent neural networks. But here, you see that you have not
+only the sequential transition edges in your data representation, but
+you have also some other edges. Those red ages,
+tell you about coreference. Coreference is another linguistic
+type of relation between the words that says like she is the same as Mary,
+right? So she is just a substitute for the Mary. And for example, this and that football
+is the same ball, just mentioned twice. The green think is about hypernym
+relationship that I have briefly mentioned. So the football is a particular
+type of the balls, right. So once we know that our words
+have some relationships, we can add some additional
+edges to our data structure. And after that, we can have so
+called DAG-LSTM, which is dynamic acyclic graph-LSTM that
+will try to utilize these edges, okay? So I'm not going now to
+cover this DAG-LSTM model. I just want you to see that there is
+a way to use the linguistic knowledge to our needs here and to improve
+the performance of some particular question answering task, for example. In the rest of the video, I want to cover another example of
+linguistic information used in the system. So this will be about syntax. So let us have just a few more details
+of how syntax can be represented. Usually these are some kinds of trees. So here you can see the dependency
+tree and it says that, for example, the word shot is
+the main word here and it has the subject, I,
+and the object elephant. And the elephant has a modifier an,
+and so on. Right, so you have some
+dependencies between the words. And usually you can obtain these
+by some syntactic parsers. Another way to represent syntax would
+be so-called constituency trees. So you can see the same sentence
+in the bottom of the slide. And then you parse it from bottom to
+top to get this hierarchical structure. So you know that an and elephant are
+determinant and noun, respectively, and then you merge them to get a noun phrase. Also, there to merge it with a verb,
+which is short and yet a verb phrase. You merge it with another subtree and
+get a big verb phrase. And finally, this verb phrase plus noun
+phrase, I, gives you the whole sentence. Actually, you can stop at some moment so you cannot parse the whole
+structure from bottom to the top. But just say that, it is enough for
+you to know that for example, in my picture is
+some particular subtree. Why can it be useful? So first, it is called shallow parsing. And it used for example in named
+entities recognition because a named entity is a very likely to be
+a noun phrase, just altogether, right. New York City would be a nice
+noun phrase in some sentence. So, it can help there but it can also help
+as the whole tree in some other tasks. And the example of some of this
+task would be sentiment analysis. The sentiment analysis treats
+reviews as some pieces of text and tries to predict whether they are positive
+or negative, or maybe neutral. So here you can see that
+you have some pluses and minuses and zeros,
+which stand for the sentiment. So you have your sentence, right? And then you try to parse
+it with your syntax. So you get this nice subtrees that we
+have just seen in the previous slide. And the idea is, that if you know
+the sentiment of some particular words, for example you know that humor is good. Then you can try to merge those sentiment to produce the sentiment
+of the whole phrase. Okay, so intelligent humor are both good
+and they give you some good sentiment. But then when you have some not
+in the sentence, you get the not good sentiment, which results in the
+negative sentiment for the whole sentence. So this is rather advanced approach. It is called recursive neural networks, or dynamic acyclic graph neural networks,
+and so on. Sometimes they can be useful,
+but in many practical cases, it is just enough to do some more
+simple classification for your work. So in the rest of this week, my colleague
+will discuss classification task. For example, for
+sentiment analysis in many, many details. [MUSIC]

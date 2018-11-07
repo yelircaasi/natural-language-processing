@@ -1,0 +1,107 @@
+[MUSIC] Hey, in the previous video we discussed
+that there is Hidden Markov Model that can be used for part-of-speech tagging. We have briefly discussed
+how to train this model, now how can we apply this to our texts? This slide is just a motivation for the next video, to show you that it
+is actually not that simple problem. So for example, you can see a sequence
+of words, a bear likes honey, and you can see that it can be
+decoded in different ways. So the sequence of text in the top and in
+the bottom of the slides are both valid. So both sequences could generate
+this piece of text, right? This is because we have
+very ambiguous language. For example, likes can be noun, or verb, or something else maybe,
+if we think about it. Okay, then how can we generate the most probable sequence of text
+given a piece of text? This is called decoding problem, and this
+is formalized in the bottom of the slide. So we need to find y which maximizes
+the probability of y given x. And as we have briefly discussed,
+it would be the same as y that maximizes the probability
+of both variables. Now could we probably just
+compute the probabilities of all ys, and then choose the best one? Well not actually, because this brute force approach
+would be really slow, right? Or maybe not feasible at all, because you have very many
+different sequences of text. Let's say you have big T which is
+the length of the sentence, and you have 10 possible states. Then you will have T to the power
+of 10 different sequences, right? So this is too much, but
+fortunately there is an algorithm based on dynamic programming
+that can help us to do this effectively. Before we go to it, I just want to recap
+the main formula for Hidden Markov Model. So please remember that we have the
+probabilities of y given the previous y, which are called transition probabilities,
+and then we have output probabilities. And we multiply them by
+the positions to get our total probability of both variables. Okay, so
+this is probably the main slide here, which tells you what is Viterbi algorithm. Let us go through it slowly. We would like to find
+a sequence of text that is the most probable to generate
+our output sentence. However, we can do it straightforwardly. So let us first start with finding
+the most probable sequences of text, up to the moment t,
+that finishes in the state s. So those big Qt,s things. And let us denote by small qt,s
+the probabilities of those sequences. Now, how can we compute those
+probabilities effectively? We can say that once we have computed
+them for the time moment t-1, we can use that to compute the next
+probabilities for the next time moment. How do we do this? Well we see that we have our
+transition probabilities and output probabilities,
+as is said by the Hidden Markov Model. And then we have these green qt-1
+probabilities that hide the transition probabilities and output probabilities for
+all the previous time moments. Okay, and
+then we apply maximum because remember, we are only interested in
+the most probable sequences. Now when we compute these
+probabilities we are also interested in the argmax,
+because the argmax will tell us what are the states where these
+probabilities can be found. Okay, probably it is not yet clear for
+you, so during the video I am going to show you lots of pictures and examples
+that explain how this algorithm works. Let us say that we have some Hidden Markov
+Model, and it is already trained for us. So this is A matrix, which has probabilities of some states
+given some other states, right? Our transition probabilities. Each row sums into 1, which means that
+we have indeed correct probabilities. Now I have a question for you, do you think that something
+is missing in this matrix? So if you remember from
+the previous video, we had also our special start state. And we will need to have a special
+first row in this matrix that will have the probabilities of some states
+given this special start state. For now, let's say that this row is
+just filled with equal probabilities, so it is just a uniform distribution. Okay, so we have these parameters for
+A matrix, and we have this B matrix which
+tells us the probabilities of the output tokens given some states. Awesome, now let us imagine
+that our probability algorithm has already computed
+the probabilities up to some moment. So we have some probabilities
+up to the bear in our sequence. Now how can we compute the probabilities
+for the next time moment? For the first state, for ADJ state, we can try to go from
+different previous states. And we have transition probabilities,
+different transition probabilities for each of them. And we have also the output probabilities
+to generate likes in this case. Now we need to find maximum, so
+we need to find the best way. And in this case, it will be this one. So we find this way, and we say that the probability is
+now composed by three things. The previous probability that we had so
+far, the transition probability, and the output probability. Now let us try to do the same for
+the next state. So another state is NOUN, and
+we again need to compare different paths. So we have three paths,
+which one would be chosen this time? So this time we will choose this one,
+because the multiplication of three components again will
+be maximum for this one, right? So this will be that value,
+and we could compute this. Now we perform the same thing for
+the last state. So here we have this path, we choose
+this one, and compute the probabilities. And are we done? Well we could compute the probabilities
+for the next time moment, and this way we can move forward. But it is very important to remember
+the best transitions that we used. Why? Because this is how we are going to
+find our best path for the states. This is what we compute for
+every time moment. Now let us zoom out and see what is
+happening for the whole sentence. So this is what you get if you
+compute all the probabilities and remember all the best transitions. Now once again,
+what are those best transitions? So for example, the path that
+goes through ADJ, NOUN, VERB and NOUN is the most probable
+sequence of text that generates our sentence and
+finishes in the state NOUN, okay? This is just the definition. And the probability of this path is
+written down there, near the NOUN. Okay, so what do we need to compute now? We have these three candidates that can finish in one of
+the three states for honey. Remember, we need the most
+probable one ever. So we need to compute maximum once again. We need to compute maximum,
+it would be NOUN. And then we take it and we say that okay, the last state
+in our sequence should be NOUN. And then we backtrace to VERB,
+to NOUN, and to ADJ to get the sequence of text
+that is the best in this case. Awesome, we are done with the pictures. This slide just summarizes everything
+that we have already said. So to create your best path you
+need to first allocate an array queue of the dimension the number
+of words in your sentence, by the number of states in your model. Then you need to fill the first
+column in your matrix, right? So for the first time moment it is rather
+easy to compute the probabilities of the states. This would be just the probabilities
+to come to these states from the initial start state, multiplied by the probability to output
+the first word in this current state. Now after that you have a loop. So you go through all your positions in
+time, and you go through all your steps, and compute those max values and
+argmax values. After that you have your last column. You apply argmax once again to
+find what would be the pick for the last word in your sentence. After that you backtrace all your text for
+the path. And you are done, you get your best path. So this is decoding in
+Hidden Markov Models. And this is real useful, not only in part-of-speech 
+tagging actually, but also, for example, for some signals and
+other source of data where you have different states that
+can generate some outputs. So this is all for this video. And in the next one, we will discuss a few more models that
+are similar to Hidden Markov Model. [MUSIC]

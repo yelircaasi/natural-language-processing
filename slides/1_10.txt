@@ -1,0 +1,85 @@
+Hi, in this video,
+we'll go deeper with text. Let me remind you that you can think of
+text as a sequence of words, or phrases, or sentences. Or, like in this video, we'll think
+of text as a sequence of characters. How can we treat a text as
+a sequence of characters? Lets take an example phrase cat runs, and it has underscores which
+means white space and it is easy to talkanize
+our text into characters. And then we can embed each characters
+into vector of length let's say 70, which has in a one hot-encoding manner. So, our alphabet is not that huge and our special characters are not that,
+their number is not that huge as well, so this one hot-encoded vector will be
+sparse, but it will not be that long. Okay, so what do we do next? We have some numbers now and
+it looks like a sequence of those numbers. Let's start with character n-grams. It seems that we need to just like
+when we were processing words in the setting when we have characters,
+n-grams still make sense. And we can do that with 1D convolutions. That means that we take that C character. And we use padding here,
+that white space on the left. And we take a convolution and
+we get some result. And we move that window,
+get another value. And we do it all the way to
+the end of the sequence and get some values there as well. So this is 1D convolution because we slide
+the window only in one direction, time. Okay, we can have a different kernel,
+a different convolutional kernel, and we will have different values. We can take 1000 of those kernels and
+we'll have 1000 filters in the result. But what's next? If you remember how we do in convolutional
+networks, we usually add convolution followed by pooling, then again
+convolution and pooling and so forth. So let's add pooling here. Let's see how pooling is applied. We take, let me remind you
+that it works on filter level. It takes the values that are neighboring
+values, and it takes the maximum of them. This time, it's 0.8. Then we move that window
+with a stride of two, and we take the maximum of
+those values as well. And we do it all to the end, and we do
+that for all the filters we have, and this is our pooling output. Why do we need pooling? It actually introduces a little bit of position invariance
+to our character n-grams. So, if that character n-gram slides
+like one character to the left, to the right, there is a high
+chance that thanks to pooling, the activation that we will have in
+that pooling output will stay the same. Okay, and as you remember, we continue to apply convolutions
+followed by pooling and so forth. So let's take that previous
+pooling output, and let's apply 1D convolutions as well. So we get some filter outputs, and
+we can work with those values. And what we do next is we add pooling,
+and pooling works just the same. We take neighboring two values,
+we take the maximum of that, then we move that sliding window, that
+green window with a stride of two, and we have a different value. So that's how we applied convolution and
+pooling again. And notice that our length of our like
+feature representation actually decreases. That means that our receptive field
+actually increases and we look at more and more characters in our input when we make
+decision about activation on a deep level. We can continue to do that and
+we can actually do that six times and that's how we get to
+our final architecture. Our final architecture looks like this. We take first 1,000 characters of text and
+in certain datasets that makes sense. It doesn't make sense to
+like to read the whole text. Maybe 1,000 characters will be enough. Then we apply 1D convolution
+plus max pooling 6 times, and we use the following kernel width: 7,7 and
+all the rest are 3s. And we use 1,000 filters at each step. That means that after applying
+that procedure 6 times, we get a matrix of features
+of size 1,000 by 34. And what you can do what
+those features now, you can actually apply a multi-layer
+perceptron for your task. It can be regression classification or
+any other laws you like. Let's see how it works on
+experimental datasets. All these datasets are either
+a categorization, like news datasets, or a sentiment analysis like Yelp reviews,
+or Amazon reviews. And we have two categories
+of these datasets. The first one, the red one,
+are smaller datasets, and they contain, at most,
+600,000 training samples. And we have bigger datasets that
+contains millions of samples. So let's compare our models on
+these two types of datasets. The first table that you see contains
+errors on test set for classical models. For classical models like bag of worths or bag of worths with TFIDF with
+linear model on top of that. Or you can replace tokens with n-grams and
+to do the same thing. And as you can see, on small datasets, which are in red border here,
+you can see that our error is the least when we use n-grams
+with TFIDF, most of the time. So it tells us that if you have a small
+training set then it makes sense to use classical approaches. But if your dataset grows and you have millions of examples, then maybe
+you can learn some deeper representations. And that is the second table. It contains errors and
+test sets for the same datasets. And here you can see LSTM and our convolutional architecture
+that we have overviewed. And you can see that our architecture
+actually beats LSDM on huge datasets. This gain sometimes is not that huge but
+it is actually very surprising. And you can see that these deep
+approaches work significantly better than classical approaches. Let's say for
+Amazon reviews which is the last column, you've got degrees in error
+from roughly 8% to like 5%. So, this is pretty cool. So what we learned from this that,
+we've learned the following, that deep models work better for
+large datasets, and it makes sense to make all that huge
+architectures when you have huge datasets. Okay, so let me summarize. You can use convolutional networks
+on not only on top of words but also on top of characters. You can tweak,
+text as a sequence of characters. This is called learning
+from scratch in literature. It works best for large datasets where it beats classical
+approaches like bag of words. And surprisingly, sometimes it even
+beats LSTM that works on word level. So what you've done is you've
+come to the character level and learned some deeper representations and you don't tell the system or the model
+where the words are and it works better. So this is pretty cool. So this video concludes our first week. And I wish you good luck
+in the following weeks. [MUSIC]

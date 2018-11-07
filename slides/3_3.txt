@@ -1,0 +1,114 @@
+[MUSIC] Hey, in the previous video, we had all necessary background to see
+what is inside word2vec and doc2vec. These two models are rather famous, so
+we will see how to use them in some tasks. Okay, let us get started with word2vec. So it is just some software package
+that has several different variance. One variant would be
+continuous bag-of-words. It means that we try to predict
+one word given the context words. Another option would be to do
+vice versa and predict context words given some words and
+this one will be called skip-gram. Then softmax computation
+is usually too slow, and producing those
+probabilities is not effective. So there are some ways to avoid that,
+and one way would be negative sampling. So you might remember
+from the previous video, that we have already discussed
+skip-gram negative sampling model. And this is one of architectures
+of this word2vec program. This is open source, so
+you can just find the code there. Okay, now how do we use these models? One task would be to produce some
+meaningful similarities between words. So you remember that we
+could build word embeddings, sum vectors that represent
+the meaning of the word. Now if we just apply cosine
+similarity to those vectors, we will get some measure of
+similarity between the words. How can we test this model? How can we see that actually those
+similarity measures are good and somehow meaningful? Well this is actually a very
+complicated question, but we can use some human judgements. So what we see is that
+there are some data sets provided by linguists that look
+like the first table in this slide. For example, they say that tiger and
+tiger are super similar. And media and radio are also similar,
+but not to that extent, and so on. So you have some ranked list of
+word pairs with their similarities. Now you can produce the more similarities
+by your model as the table in the right. And then just compare these two rank list,
+let's say with Spearman's correlation. And then you will see whether your model
+somehow agrees with the assessors. Obviously, using human judgements
+is not always the best way. It would be better to use
+some extrinsic evaluation. For example,
+you could build a ranking system and then apply word similarities there, compute the quality of the ranking system,
+and use this to evaluate your model. Okay, anyways,
+let us come to the next task. The next task is rather appealing. So if you have not heard about it, look,
+we have some vectors for the words. For example, we have a vector for king, then we can apply some arithmetic
+operations over these vectors. Like king minus man plus woman,
+we get some other vector, and the closest word for
+this vector will be queen, you see? So we can somehow understand
+relations between the words. We can understand that man to woman is
+related in the same way as king to queen. You can think about some
+other analogy like, for example, Moscow minus Russia plus
+France will be equal to Peru. And something like that, when I say equal
+it means that those cosine similarity. Gets its maximum for the target worth. This task become very famous
+after the recent papers. However it have been started
+a lot in cognition science and it was called relational similarity. On the contrary, the similarity
+that we have been discussing up to this moment was called
+attributional similarity. Now how do you evaluate
+word analogies task? Again, we usually rely on human judgments. So there are some datasets that
+say that man to woman relates the same as king to queen and
+so on, for many, many examples. And then we try to
+predict the last word and compute the accuracy of these predictions. Awesome, now let us see how different
+models perform on these two tasks. So let us try to remember
+what is every model about. So the first row is about PMI, we can
+compute PMI values between the words and just the long sparse vectors
+of PMI as word embeddings. Second, we can apply SVD
+to the PMI matrix and get somehow, dense and
+low dimensional vectors. Then we can do skip-gram
+negative sampling module, that we have discussed a lot
+in the previous video. Now, do remember what is GLoVe? Well, GloVe was also covered
+in the previous video. And it was about measures factorization
+with respect to weighted squared loss. So you might remember this green F
+function that was increasing and at some point, it just went constant not
+to be overwhelmed with too frequent words. Okay, so we have four methods,
+different ways to perform matrix factorization maybe implicit matrix
+factorization and obtain word embeddings. And you can see that actually
+they perform really similar. So different columns here correspond
+to different datasets of word pairs. So you can see that the bold best values
+are somehow spread around this table. So very old methods like SVD
+is not much worse than very recent methods like
+skip-gram negative sampling. Now what havens with word analogies task? There are also two data sets here,
+one from Google and another from Microsoft Research. And one take away of it would be
+that the quality is very nice. So for Google that is said
+is about 70% of accuray, which means that in 70%,
+we can guess the right word correctly. For example, we can guess that king
+minus man plus woman is equal to queen. This is awesome, but actually we'll see
+some problems with that in the next video. Okay, now let us come to paragraph2vec or
+doc2vec. Actually these two names
+are about the same model. Paragraph2vec name goes from the paper. Doc2vec name goes from gensim
+library where it is implemented. You remember that in word2vec,
+we had two architectures to say that we produce contexts
+given some focus word or vice versa focus word given some contexts. Now we can also have some document ID. So we will treat the document
+the same way as we treated words. So we will have some ID in some fixed
+vocabulary of the documents and then we will build embeddings for
+the documents. Now there are again, two architecture. The first architecture, DM, stands for providing the probabilities of focus
+words, given everything we have. And DBOW architecture stands for providing the probability of
+the context given the document. So the last one is somehow similar
+to skip-gram model, right? But instead of the focus words,
+we condition on the document. Now, how can we use this model? Well we can use it to provide some
+documents similarities and apply, for example, for ranking again. How can it test that we document
+similarities provided by our model a good? Well we need some test set again, so
+that it does set released by the way paper in the bottom of the slide
+provides triplets from archive papers. We have some paper, and
+then another paper, which is known to be similar, and
+then a third paper which is dissimilar. So the task is to predict if
+this one is the dissimilar one. And if the model can do this,
+then the model provides good estimates for document similarities. And so we'll just compute the accuracy
+of this prediction task, Okay? Now I want just to sum up
+everything that we have covered. So there are models called word2vec and
+doc2vec, that actually not even models but rather implementations of
+different architectures. You can find them, for example,
+in gensim library and play with them. And there are different
+ways to use this model. And for every usage of the model, we need some dataset to evaluate
+whether the usage will be good. Whether the provided word similarities or
+document similarities will be good enough. Some other ways to evaluate these
+models would be to see whether each component of the vector is
+interpretable in some way or to look into the geometry of
+this space of the embeddings. This might be more complicated, so we are not going into the details of these
+ways, and maybe it is also not so needed. So one takeaway that is really
+needed to be understood is that count-based methods like SVD
+applied to PMI metrics are not so different from predictive
+based methods as word2vec. So there is no magic behind them,
+and in the next video, we will actually see some
+problems behind them. Thank you. [MUSIC]

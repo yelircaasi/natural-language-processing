@@ -1,0 +1,179 @@
+[MUSIC] Hi everyone, this week is about
+sequence to sequence tasks. We have a lot of them in NLP, but one obvious example would
+be machine translation. So you have a sequence of words
+in one language as an input, and you want to produce a sequence of words
+in some other language as an output. Now, you can think about
+some other examples. For example, summarization is also
+a sequence to sequence task and you can think about it as
+machine translation but for one language,
+monolingual machine translation. Well we will cover these examples in the
+end of the week but now let us start with statistical machine translation,
+and neural machine translation. We will see that actually
+there are some techniques, that are super similar in
+both these approaches. For example, we will see alignments, word alignments that we need in
+statistical machine translation. And then, we will see that we have
+attention mechanism in neural networks that kind of has similar
+meaning in these tasks. Okay, so let us begin, and
+I think there is no need to tell you that machine translation is important,
+we just know that. So I would better start
+with two other questions. Two questions that actually we
+skip a lot in our course and in some other courses but these are two
+very important questions to speak about. So one question is data and
+another question is evaluation. When you get some real task in your life,
+some NLP task usually this is not a model that is plane,
+this is usually data and evaluation. So you can have a fancy
+neuro-architecture, but if you do not have good data and
+if you haven't settled down how to do evaluation procedure,
+you're not going to have good results. So first data, well what kind of data
+do we need for machine translation? We need some parallel corpora, so
+we need some text in one language and we need its translation
+to another language. Where does that come from, so
+what sources can you think of? Well, one of your source well maybe not so
+obvious but one very good source,
+is European Parliament proceedings. So you have there some texts in several
+languages, maybe 20 languages and very exact translations of
+one in the same statements. And this is nice, so you can use that,
+some other domain would be movies. So you have subtitles that are translated
+in many languages this is nice. Something which is not that useful,
+but still useful, would be books translations or
+Wikipedia articles. So for example, for
+Wikipedia you can not guarantee that you have the same text for two languages. But you can have something similar,
+for example some vague translations or which are to the same topic at least. So we call this corpora comparable but
+not parallel. The OPUS website has the nice overview
+of many sources so please check it out. But I want to discuss something which is
+not nice, some problems with the data. Actually, we have lots of problems for
+any data that we have, and what kind of problems happen for
+machine translation? Well, first, usually the data
+comes from some specific domain. So imagine you have movie subtitles and
+you want to train a system for scientific papers translations. It's not going to work, right, so
+you need to have some close domain. Or you need to know how to transfer
+your knowledge from one domain to another domain,
+this is something to think about. Now, you can have some decent amount of
+data for some language pairs like English and French, or English and German, but
+probably for some rare language pairs, you have really not a lot of data,
+and that's a huge problem. Also you can have noisy and not enough
+data, and it can be not aligned well. By alignment I mean, you need to know
+the correspondence between the sentences, or even better the correspondence
+between the words and the sentences. And this is luxury, so
+usually you do not have that, at least for a huge amount of data. Okay, now I think it's clear about
+the data, so the second thing, evaluation. Well you can say that we
+have some parallel data. So why don't we just split it to train and
+test and have our test set to compare correct translations and
+those that are produced by our system. But well,
+how do we know that the translation is wrong just because it doesn't
+occur in your reference? You know that the language is so relative so every translator would
+do some different translations. It means that if your system produce
+something different it doesn't mean yet that it is wrong. So well there is no nice answer for this
+question, I mean this is a problem, yes. One thing that you can do is to have
+multiple references so you can have, let's say five references and
+compare your system output to all of them. And the other thing is you should be
+very careful how do you compare it. So definitely you shouldn't
+do just exact match, right you should do
+something more intelligent. And I'm going to show you BLUE score
+which is known to be very popular measure in machine translation that try
+somehow to softly measure whether your system output is somehow similar
+to the reference translation. Okay, let me show you an example. So you have some reference translation and
+you have the output of your system and you try to compare them. Well, you remember that we have this
+nice tool which is called engrams. So you can compute some unigrams and
+bigrams and trigrams. Do you have any idea how to use that here? Well, first we can try to compute
+some precision, what does it mean? You look into your system output,
+and here you have six words, six unigrams and compute how many of
+them actually occur in the reference. So the unigram precision
+core will be 4 out of 6. Now, tell me what would
+be bigram score here. Well, the bigram score will be
+3 out of 5 because you have 5 bigrams in your system output and
+only 3 of them was sent sent on and on Tuesday occurred in the reference. Now you can proceed and
+you can compute 3-grams score and 4-grams score, so that's good. Maybe we can just average them and
+have some measure. Well we could, but
+there is one problem here, well imagine that the system
+tries to be super precise. Then it is good for system to output
+super short sentences, right? So if I'm sure that this
+union gram should occur, I will just output this and
+I will not output more. So just to punish into penalty the model,
+we can have some brevity score. This brevity penalty says that we divide the length of the output
+by the length of the reference. And then the system outputs two short
+sentences, we will get to know that. Now how do we compute the BLEU
+score out of these values? Like this so we have some average so
+this root is the average of our union gram, bigram,
+3-gram, and 4-gram's course. And then we multiply this
+average by the brevity. Okay, now let us speak about
+how the system actually works. So this is kind of a mandatory
+slide on machine translation, because kind of any tutorial on
+machine translation has this. So I decided not to be an exception and
+show you that. So the idea is like that,
+we have some source sentence and we want to translate it to
+get some target sentence. Now the first thing that we can
+do is just direct transfer. So we can translate this source sentence
+word by word and get the target sentence. But well,
+maybe it's not super good, right? So if you have ever studied some foreign
+language, you know that just by dictionary translations of every word, you usually
+do not get nice coherent translation. So probably we would better
+go into some synthetic level. So we do syntax analysis, and
+then we do the transfer and then we generate the target
+sentence by knowing how it should look like on on
+the syntactic level. Even better, we could try to go to
+semantic layer, so that first we analyze the source sentence and understand some
+meanings of some parts of the sentence. We somehow transfer these
+meanings to in our language and then we generate some good syntactic
+structures with good meaning. And our dream, like the best
+things as we could ever think of, would be having some interlingual. So by interlingual, we mean some
+n ice representation of the whole source sentence that is enough to
+generate the whole target sentence. Actually it is still a dream, so
+it is still a dream of the translators to have that kind of system
+because it sounds so appealing. But neural translation systems
+somehow have mechanisms that resembles that and I will show
+you that in a couple of slides. Okay, so for now I want to show you
+some brief history of the area. And like any other area, machine translation has some bright and
+dark periods. So in 1954 there were great expectations,
+so there was IBM experiments where they translated 60 sentences
+from Russian to English. And they said, that's easy we can
+solve the machine translation task completely in just three or
+five years. So they tried to work on that and
+they worked a lot, and after many years they concluded
+that actually it's not that easy. And they said, well,
+machine translation is too expensive and we should not do automatic
+machine translation system. We should better focus on just
+some tools that help human translators to provide
+good quality translations. So you know these great expectations and then the disappointment
+made the area silent for a while, but then in 1988 IBM researchers proposed word-based machine
+translation systems. These machine translation
+systems were rather simple, so we will cover them, kind of in this
+video and in the next video, but these systems were kind of the first
+working system for machine translation. So this was nice and then the next
+important step was phrase based machine translations system that were
+proposed by Philip Koehn in 2003. And this is what probably people mean
+by statistical machine translation now. You definitely know Google Translate,
+right? But maybe you haven't heard about Moses. So Moses is the system that allows
+a researchers to build their own machine translation systems. So it allows to train your models and
+to compare them, so this is a very nice tool for researchers
+and it was made available in 2007. Now, with an extent, obviously very important step here
+is neural machine translation. It is amazing how fast the neural
+machine translation systems could go from research
+papers to production. Usually we have such a big
+gap between these two things. But in this case there were just two or
+three years so it is amazing that those ideas that
+were proposed could be implemented and just launched in many companies in 2016 so
+we have neutral machine translations now. You might be wondering what is WMT there,
+it is the workshop on machine translation, which is kind of the annual competition,
+the annual event and shared tasks. Which means that you can compare your
+systems there, and it is a very nice venue to compare different systems by
+different researchers and companies. And to see what are the traits
+of machine translations. And it happens every year, so
+usually people who do research in this area keep eye on this and
+this is very nice thing. This is the slide about intralingual
+that I promised to show you. So this is how Google neural
+machine translation works, and there was actually lots of hype
+around it maybe even too much. But still, so the idea is that you train
+some system or some pair of languages. For example on English to Japanese and
+Japanese to English and English to Korean and some other pair, you
+train some encoder, decoder architecture. It means that you have some encoder
+that encodes your sentence to some hidden representation. And then you have decoder that takes
+that hidden representation and decodes it to the target sentence. Now the nice thing is, that if you
+just take your encoder, let's say for Japanese and decoder for
+Korean and you just take them. Somehow it works nicely even
+though the system has never seen Japanese to Korean translations. You see so this is zero-shot translation
+you have never seen Japanese to Korean, but just by building nice encoder and nice decoder, you can stack them and
+get this path. So it seems like this hidden
+representation that you have, is kind of universal for
+any language pair. Well, it is not completely true but
+at least it is very promising result. [MUSIC]

@@ -1,0 +1,125 @@
+[SOUND] This video is about all kind
+of problems that you can have with vocabulary in machine translations. So first, vocabulary is usually too large,
+and it is too long to compute softmax. Second, vocabulary is usually too small,
+and you have out-of-vocabulary words, and
+you need somehow to deal with them. And you have a whole range
+on different tricks for you in neural language modeling and
+in machine translation. Now, let us start with
+hierarchical softmax. It is a nice procedure to help you
+to compute softmax in a fast way. So the idea is to build the binary
+tree for your words, like here. And the words in this tree
+will have some codes. So for example, the zebra will have
+code 01, which means that first, we go to the left, it is 0, and
+then we go to the right, it is 1. And importantly, it is just unique mapping
+between words and codes in the tree. So we are going to use this property,
+and we are going to produce the probabilities for
+words using their binary codes. This is how we make it. So instead of computing the probability
+of the word and normalizing it across the whole vocabulary, we are going
+to split it into separate terms. Each term is the probability of the digit,
+is the probability of the next decision in the tree,
+whether to go to the left or to the right. And we build these probabilities
+into the product so that this product is going to estimate
+the probability of the whole word. Now, do you believe that this
+product of binary probabilities is going to be normalized into
+one across the whole vocabulary? Well, sounds like a magic, isn't it? But let's see that actually, it happens. So you see that this is your binary tree,
+and you see those probabilities. They are just written down for
+every path in the tree. Now, you can try to sum
+the first two probabilities, and you note that 0.1 plus 0.9 gives 1,
+and this is not just random. This is always 1,
+just because this is probability for two options, right, going to the left and
+going to the right. That's why they
+are necessary summed into 1. So if you sum those things, you get their
+common prefix, which will be 0.7 by 0.8. Then you can try to sum two
+other childs in the tree, and you get, again, their common prefix. You sum two other childs, and
+you get, again, their common prefix. And finally, you sum these two values,
+and you get 1. So it is clearly seen that
+if you go from bottom to the top with this tree,
+you will get probability equal to 1. So just to sum it up,
+we split the probability into these binary solutions, and
+we use some tree to do this. What kind of tree do we do? Well, it is actually not so important. So interestingly,
+even just random tree can help. Alternatively, you can use
+Huffman tree that gets to know the frequencies of some words,
+and it uses that. Or you can try to use some semantics so you can just cluster your words in
+the data based on their similarities. Or you can use some pre-built structure
+that says that these words are similar and that they should be found
+in one hierarchy branch. Okay, now I have one last question for
+you for this method. What would be a way to
+model the probability of di given all the other stuff? So usually, we have softmax
+to model some probabilities. What would be the probability
+in this case? Well, in this case, we have just
+only two options, left and right. So instead of softmax, we can have sigmoid
+function, which has just two outcomes. Okay, now let us come back to some
+other problems with our bot vocabulary. And copy mechanism is something to
+help with out-of-vocabulary words. Imagine you have some sentence,
+and some words are UNK tokens. So you do not have them in the vocabulary,
+and you do not know how to translate them, you get UNK tokens as the result. But what if you know the word alignments? If you know how the words are aligned,
+you can use that. So you can say, okay, this UNK corresponds to that UNK,
+which corresponds to this source word. Let us just do dictionary translation, or let us just copy, because this is the name
+of some place or some other name. Let us just copy this as is. This is why it is called copy mechanism,
+and the algorithm is super simple. So you need first to make sure that
+you somehow learn word alignments. For example, your neural machine translation system
+has these alignments as an input. And it tries to predict them along
+with the translation predictions. Now, you get your translation with UNK
+tokens, and you post-process this. So you just copy the source words, or you translate them with dictionary or
+do whatever else what you want. Okay, very simple and nice technique, but
+actually, there are still many problems. For example,
+you can have some multi-word alignments. What if the morphology of
+the languages are complicated, and probably, you want to split
+it somehow into some parts? Or what if you have
+some informal spelling? All those things are usually
+out-of-vocabulary words. And these examples show
+you that sometimes, it is very nice to go to sub-word level. For example, for rich morphology, it would be nice to model every
+piece of the word independently. Or for informal spelling, it would be
+definitely good to model them by letters. Because there is no chance to find these
+words as a whole in the vocabulary. Okay, so there are two big
+trends in sub-word modelling. One big trend is to do some hybrid
+models that somehow combines word-level models and character-level models. Another big trend is to do the same
+architecture, let's say, recurrent neural network, but with some small units,
+something in between words and characters. So this is one architecture,
+but other units. Okay, let us start with hybrid models. So you might know that sometimes,
+character-based models are super useful. For example, you see the word drinkable. And if you can build your
+convolutional neural network that has some convolutions that
+represent the meaning of drink. And then some other convolutions
+that represent the meaning of able, you are likely to build
+the meaning of the whole word, even if you have never seen that. So character-level convolutional
+neural networks can work fine. Also, bidirectional LSTMs can be used on
+word level as well as on character level. Now, for our translation model,
+it is super nice to have hybrid models. Let's say,
+let us first try to work on word level. So let us try to produce
+word translations. For example, we have a cute cat here. And a and cat are nice words. But what if cute is out of vocabulary? We cannot model it on word level. In this case, let us have some separate
+units, some separate architecture, maybe even completely different,
+that will model these probabilities for this word on character level,
+and the same for the decoder. So first, we will try to decode
+the sequence on word level. And then, in some moments,
+the decoder will say, okay, this is some UNK token,
+please do something about it. And then the character-level model will
+switch on and do something about it. So this is a very nice and
+obvious idea, and it is used a lot. Now, the second big trend would
+be sub-word modeling, and one good example of that
+is byte-pair encoding. Let us understand what it is. So imagine you have some sentence, and you want to encode this, and you are not
+quite sure yet what is your vocabulary. You have just some constraints for
+the size of the vocabulary. So you start with characters. Everything is split to single characters. Then you say, okay, what are the most
+popular bigrams of my letters here? Well, I see that S-H happens three times. So maybe I should collapse
+them into just one unit. And you do this, and
+you have some other vocabulary right now. Okay, now you say, okay, what is next? Next, I see that these two letters
+occur a lot, let us collapse them. These two letters also
+should be collapsed. And then importantly, you can apply
+the same procedure to sub-word units. So here, you would collapse your
+bigrams and unigrams into trigrams. And actually,
+you can stop whenever you want. So you can proceed until you get the nice
+size of the vocabulary that you like. Yep, I have just said you this. So one thing to mention is how to
+apply this method for test data. So if you have test data,
+you also split it to letters first. And then you know the exact rules
+from your training procedure. And you apply those rules to test data, to
+collapse all the sub-word units as needed. Awesome, so this chart shows you
+why it is so cool technique. So this is the vocabulary size, and
+this line there, this vertical line, is about the size of the vocabulary
+that we are allowed. And in case of words, usually you have some long tail that goes
+outside of this allowed amount of words. But with byte-pair encoding,
+you can do exactly this number of units, because you decide which rules to apply. And finally, I can show you
+that this actually works fine. So for some different pairs of languages,
+for some different tasks from, for example, WMT, which is Workshop on Machine
+Translation, you can see that byte-pair encoding has better BLEU score
+than word-based techniques. And actually, this BLEU score
+improvement is very meaningful. This one or two points of BLEU is a lot. So please use this very nice technique
+if you someday need to build machine translation system. [SOUND]

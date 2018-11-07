@@ -1,0 +1,125 @@
+[MUSIC] Hey, in this video we are going
+to discuss how to apply encode or decode attention architecture to
+a hot topic nowadays, to chat-bots. First of all, let us understand
+what do we mean by chat-bots? As for any hot topic, every one
+means something slightly different. So first we can have goal-oriented bots,
+and just bots that have a nice
+conversation with us. So for goal-oriented bots, we usually
+speak about some narrow domain and specific tasks to fulfill. For example, this can be a bot
+in a call center in our bank that can help customers with their needs. Worth is what can serve some specific answers to some specific
+questions of the customers. It means that usually these bots
+are based on some retrieval approach, for example, we could have some
+database of information, and then it'll just solve those answers for
+the users. Now, entertaining bots or bots that can
+just have some conversation with us. I usually call chit chat bots, and
+the model for them would be generative. What do I mean by generative models.? It means that we can just
+generate new responses. Just to compare for
+retrieval-based models, we would get some predefined responses
+just ranked from some repository. Or we would have some patterns,
+and then we would just use these patterns to get
+some specific replies. Now, there are some pros and
+cons of two models, obviously for generated models you have more freedom,
+you can generate whatever you want. But you can also have some mistake, and it
+is more complicated to build these models. So in this video, we'll speak only
+about what generative models for conversational chat-bots. And those bots that have some goals to
+assist users with their specific needs, will be more covered in the next week. Okay, so let us just recap that we could
+have our encoder to encode the incoming message for the bot, and decoder that
+would generate the bot's response. And we can have, for example, LSTMs in encoder and decoder, and
+we would also want to have attention. One other alternative for
+attention would be to have reversed input. Actually, it is a very simple thing
+that had been studies before attention. So, we shall say, maybe we need to
+reverse the input of the sentence, and then our thought vector of the
+sentence will be somehow more meaningful. Why? To understand that, let us cover one
+technical detail that we need to understand to built any
+system of that kind. The detail is about a set effect that all
+the sequences have different lengths. Okay, so you have some questions,
+for example, and you need to somehow pad those questions to have some
+fixed length for all of them. Why? Just because you need to
+pack them into batches and send these batches to your
+neural network for your. So it suggests some technical
+implementation detail that if you implement as static
+recurrent neural network, you need to pad your sequences
+with some pad tokens. So if you do this in
+the end of the sequence, you could see that the end the sequence
+is absolutely not meaningful, right? It is just PAD, PAD, PAD, and so on. So if you try to build your thought vector
+base on it, maybe it will not be nice. That's where you just reverse everything,
+and then you have your words
+in the end of the sequence. Now you can encode to that, and the decoder will get some answer for
+you also pad it as news. One other idea would be to do bucketing. What it means is that let us
+group our sentences into buckets, based on their length. For example, those sentences that
+have the length less than five, would go into the first bucket. And then for them, we can just
+pad them to the length of five. So this approach will give
+us an opportunity to have not that many pad tokens. Because we will have the adaptable length, based on the maximum
+length in each bucket. The only important thing is to put these
+buckets into different batches then, just to make sure that the recurrent
+neural network will not get buckets with a different lengths
+in one of the same batch. Okay, in the rest of the video, I'm going
+to show you how the chat-bots work, but we will also discuss
+how they do not work. So you'll see some analysis
+over the problems, and just a very ideas of what can be fixed. So, you can see that this is
+a human tool machine talk, trained for movie subtitles,
+and it is rather impressive. So, what is the purpose of living? And the machine says,
+to live forever, okay sounds good. But you can also notice that it
+is very dependent on the data set that we use to train the model. So if we try to use the same model,
+lets see for assistant in a bank, maybe that's not a good idea. So there responses will be too dramatic
+and the topics might be unrealistic. So it is very important to understand
+that you have some specific properties of the outcome,
+based on the domain of the data. Now, if you want to use it for
+calls, let us train it on calls. So you have some meaningful lexis here,
+but it is inconsistent. So the chat-bot says, what is
+the operating system of your machine? And the user says linux. After that, just in a few turns, the machine says again, so
+is it a windows machine? And the user has to answer again. So this is not nice, the bot
+doesn't remember what was happening before in our conversation,
+and you can try to fix that. So there is a paper that says,
+you would need to track the intent and the context of the conversation with
+some separate recurrent neural network. And then we can somehow just memorize for the bot that these topics
+have been already covered. And we do not need to ask again what
+is the operating system of the machine, let's say. So you do not see such problems for
+this example of the dialogue. Now another important problem is
+that the bot has no personality. So if you try to ask the bot,
+where do you live now? The bot can say, I live in Los Angeles,
+and that sounds okay. But then if you ask the bot again
+you will get some other responses. Just because it was trained
+on the data of questions and answers, and the bot doesn't
+know about consistency in them. So, one idea would be to
+build persona-based models. It means that, we need to memorize
+that the bot has some personality. So we just train iton some coherent pieces
+of dialogues from different persons, and we built this knowledge of persons. So that when we ask what is the country,
+what is the city, we still get coherent responses. Now, another problem is
+diversity in the responses. So this is a smart reply
+technology by Google, that says that it can help you
+to answer Gmail automatically. For example, if you see the email,
+let us meet up and discuss, you want to get some proposed responses. And the model would propose how
+about tomorrow, what about tomorrow, I suggest tomorrow, so
+there is no diversity. And the user cannot pick one
+of them because all of them are about the same thing. Also another problem would be that
+you have two popular responses that can come to any email. Again, you will all have not enough
+diversity and you will have I love you, even before some email from a colleague
+that is not good for your chat-boat. So how can we cope with that? Do you have any idea how
+may be to track that? One idea would be to do intent
+clustering for our responses. For example, we can have some small supervised data,
+about the types of the responses. For example, you can have the label,
+how about time for how to how about Friday or
+something like that. So you have actually some graph
+of different responses, and you have similarities between
+the responses built by some bearings, or some distributional semantics model. Now, you have some labeled nodes in
+this graph from your supervised data, and you want to propagate this
+knowledge to other labels of the graph. So this technique is called
+label propagation on graphs, and Expander is a library that
+implements this technique. So the main idea here is that we will try
+to propagate the labels of the responses, in such a way that close
+responses will get close labels. And those in such a way that those
+labels that already are known from our supervision,
+will be stayed the same, awesome. So the methods can be different but the
+idea is just to do something clustering, and then to pick up one example from every
+cluster, and suggest it for the user. So what we get out of it is very nice,
+so this is the query and this is the top generated responses. And you see that now we
+have how about Tuesday? I can on Wednesday,
+I can on some other day, so you see that you have some diversity,
+and that's what we want you to have. Well, even though the bots can try to have
+some meaningful conversation with you, you can see that there are still so
+many problems with them. And it is so easy to understand that you
+are speaking to a bot and not to a human. And that's why actually we should
+be very careful about that hype. And we should realize that well,
+indeed, we are very promising and we have some good
+opportunities in the future, but current models are still not humans. [MUSIC]
